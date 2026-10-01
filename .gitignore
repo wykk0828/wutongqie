@@ -1,0 +1,10 @@
+node_modules/
+.无痛切/
+*.log
+.zcode/tests/repair-real-*/
+.zcode/tests/real-handoff-*/
+.zcode/tests/real-incremental-*/
+
+# 本地运行产物（测试临时目录 / ZCode 计划文档），不入库
+.zcode/tests/.tmp-*/
+.zcode/plans/

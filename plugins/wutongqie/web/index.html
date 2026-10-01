@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="color-scheme" content="dark" />
+<link rel="icon" href="data:," />
+<title>无痛切 · 准备切换会话</title>
+<link rel="stylesheet" href="/style.css" />
+<script>window.__WTQ_TOKEN = "__WTQ_TOKEN__"; window.__WTQ_CWD = __WTQ_CWD__;</script>
+<script>window.__WTQ_SESSION_ID = __WTQ_SESSION_ID__;</script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">无痛切</span>
+    <span class="cwd" id="cwdLabel" title="">—</span>
+  </div>
+  <div class="top-actions">
+    <button type="button" id="btnRefresh" class="icon-btn" aria-label="刷新" title="刷新" data-fallback="刷新"><i data-lucide="refresh-cw" aria-hidden="true"></i></button>
+    <button type="button" id="btnSettings" class="icon-btn" aria-label="打开设置" title="设置" data-fallback="设置"><i data-lucide="settings" aria-hidden="true"></i></button>
+    <button type="button" id="btnShutdown" class="icon-btn" aria-label="关闭面板进程" title="关闭面板" data-fallback="关闭"><i data-lucide="x" aria-hidden="true"></i></button>
+  </div>
+</header>
+
+<main>
+  <div id="banners" class="banners"></div>
+
+  <!-- ① 当前会话 + 唯一的主动作 -->
+  <section class="section" aria-labelledby="currentHeading">
+    <div class="section-head">
+      <h1 class="section-title" id="currentHeading">当前会话</h1>
+      <span class="muted" id="currentResolved"></span>
+    </div>
+    <p class="current-title" id="currentTitle" aria-busy="true">加载中…</p>
+    <p class="current-meta" id="currentMeta"></p>
+
+    <div class="prepare">
+      <button type="button" class="btn primary" id="btnPrepare">
+        <i data-lucide="arrow-right-left" aria-hidden="true"></i><span id="btnPrepareLabel">准备切换会话</span>
+      </button>
+      <p class="hint" id="prepareHint">正常工作时不用管，归档会自动完成。准备开新对话时点这里。</p>
+    </div>
+
+    <!-- 状态面板：加载 / 进行中 / 成功 / 失败，全部原地更新 -->
+    <div class="job" id="jobBox">
+      <div class="job-view" id="jobIdle" hidden>
+        <p class="job-text" id="idleText"></p>
+      </div>
+
+      <div class="job-view" id="jobRunning" hidden>
+        <p class="job-phase" id="runPhase" role="status"></p>
+        <div class="bar" id="runBar" role="progressbar" aria-label="交接准备进度"><span id="runBarFill"></span></div>
+        <p class="hint" id="runHint"></p>
+        <div class="job-actions" id="runDraftActions" hidden>
+          <button type="button" class="btn primary small" id="btnRunDraftCopy"><i data-lucide="copy" aria-hidden="true"></i>复制当前草稿</button>
+          <span class="hint" id="runDraftText"></span>
+        </div>
+        <div class="job-actions" id="runPrevActions" hidden>
+          <button type="button" class="btn ghost small" id="btnRunPrevView"><i data-lucide="clock" aria-hidden="true"></i>查看上次交接</button>
+          <span class="hint" id="runPrevText"></span>
+        </div>
+      </div>
+
+      <div class="job-view" id="jobSuccess" hidden>
+        <div class="job-head">
+          <i data-lucide="circle-check" class="tone-good" aria-hidden="true"></i>
+          <h2 id="succTitle">交接已准备好</h2>
+        </div>
+        <p class="job-text" id="succMeta"></p>
+        <p class="notice warn" id="succStale" hidden></p>
+        <p class="job-text mono path" id="succPath" title=""></p>
+
+        <div class="hl">
+          <h3>一句话总览</h3>
+          <pre id="hlOverview"></pre>
+          <h3>最终结论与待办</h3>
+          <pre id="hlConclusions"></pre>
+          <h3>用户偏好与硬约束</h3>
+          <pre id="hlConstraints"></pre>
+          <p class="hint" id="hlEmpty" hidden>这份交接没有解析出要点，可以直接查看交接文档全文。</p>
+        </div>
+
+        <div class="notice warn" id="succWarnings" hidden></div>
+
+        <div class="job-actions">
+          <button type="button" class="btn primary" id="btnCopy"><i data-lucide="copy" aria-hidden="true"></i>复制新会话提示</button>
+          <button type="button" class="btn ghost" id="btnViewTotal"><i data-lucide="file-text" aria-hidden="true"></i>查看交接文档</button>
+          <button type="button" class="btn ghost" id="btnOpenDir"><i data-lucide="folder-open" aria-hidden="true"></i>打开目录</button>
+        </div>
+
+      </div>
+
+      <div class="job-view" id="jobError" hidden>
+        <div class="job-head">
+          <i data-lucide="triangle-alert" class="tone-bad" aria-hidden="true"></i>
+          <h2>交接准备失败</h2>
+        </div>
+        <pre class="err-text" id="errText" role="alert"></pre>
+        <p class="hint" id="errHint">失败不会自动重试。任务已在后台停止，可以重新点一次。</p>
+        <div class="job-actions">
+          <button type="button" class="btn primary" id="btnRetry"><i data-lucide="rotate-ccw" aria-hidden="true"></i>重试准备交接</button>
+        </div>
+        <div class="prev" id="prevHandover" hidden>
+          <p class="hint" id="prevHandoverText"></p>
+          <div class="job-actions">
+            <button type="button" class="btn ghost small" id="btnPrevCopy">复制旧提示</button>
+            <button type="button" class="btn ghost small" id="btnPrevView">查看旧交接</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="copy-fallback" id="copyFallback" hidden>
+        <p class="hint">浏览器拒绝了自动复制，请选中下面内容手动复制：</p>
+        <textarea id="copyText" rows="4" readonly spellcheck="false" aria-label="新会话提示内容"></textarea>
+        <button type="button" class="btn ghost small" id="btnSelectCopy">全选并复制</button>
+      </div>
+      <p class="copy-msg" id="copyMsg" role="status"></p>
+    </div>
+  </section>
+
+  <!-- ② 切换其他会话 -->
+  <details class="fold" id="foldSessions" data-store="fold.sessions">
+    <summary><i data-lucide="chevron-right" class="fold-caret" aria-hidden="true"></i><span>切换其他会话</span><span class="muted" id="choicesCount"></span></summary>
+    <div class="fold-body">
+      <p class="hint">默认自动使用最近活动的会话；手动选过就记住，下次打开仍然用它。</p>
+      <div class="rows" id="choicesList"></div>
+    </div>
+  </details>
+
+  <!-- ③ 历史归档 -->
+  <details class="fold" id="foldHistory" data-store="fold.history">
+    <summary><i data-lucide="chevron-right" class="fold-caret" aria-hidden="true"></i><span>历史归档</span><span class="muted" id="historyCount"></span></summary>
+    <div class="fold-body">
+      <h3 class="sub-title">已归档的会话</h3>
+      <div class="rows" id="sessionsList"></div>
+      <div class="sub" id="unarchivedBox" hidden>
+        <h3 class="sub-title">ZCode 里有、还没归档的会话</h3>
+        <p class="hint">点「准备交接」会自动先补上归档；「立即归档」只归档、不生成交接。</p>
+        <div class="rows" id="unarchivedList"></div>
+      </div>
+    </div>
+  </details>
+
+  <!-- ④ 高级设置：模型、归档位置、原文开关、供应商、日志 -->
+  <details class="fold" id="foldAdvanced" data-store="fold.advanced">
+    <summary><i data-lucide="chevron-right" class="fold-caret" aria-hidden="true"></i><span>高级设置</span></summary>
+    <div class="fold-body">
+      <div class="form" id="settingsForm"></div>
+      <p class="save-msg" id="settingsStatus" role="status"></p>
+
+      <div class="sub">
+        <h3 class="sub-title">归档目录</h3>
+        <p class="job-text mono path" id="rootPath" title="">—</p>
+        <div class="job-actions">
+          <button type="button" class="btn ghost small" data-act="root-folder"><i data-lucide="folder-open" aria-hidden="true"></i>打开归档根目录</button>
+        </div>
+      </div>
+
+      <div class="sub">
+        <h3 class="sub-title">可用的模型供应商</h3>
+        <div class="prov-list" id="providerList"></div>
+      </div>
+
+      <div class="sub">
+        <h3 class="sub-title">最近活动</h3>
+        <div class="log" id="log" role="log" aria-label="最近活动"></div>
+      </div>
+    </div>
+  </details>
+</main>
+
+<dialog class="dialog" id="docDialog" aria-labelledby="docTitle">
+  <div class="dialog-head">
+    <h2 id="docTitle">交接文档</h2>
+    <button type="button" id="docClose" class="icon-btn" aria-label="关闭文档" title="关闭" data-fallback="关闭"><i data-lucide="x" aria-hidden="true"></i></button>
+  </div>
+  <div class="dialog-body">
+    <p class="hint" id="docStatus" role="status" hidden></p>
+    <pre class="doc" id="docBody"></pre>
+  </div>
+  <div class="dialog-foot">
+    <button type="button" class="btn ghost small" id="docRetry" hidden><i data-lucide="rotate-ccw" aria-hidden="true"></i>重试</button>
+    <button type="button" class="btn ghost small" id="docOpenFolder" hidden><i data-lucide="folder-open" aria-hidden="true"></i>打开目录</button>
+    <button type="button" class="btn small" id="docDone">关闭</button>
+  </div>
+</dialog>
+
+<dialog class="dialog narrow" id="confirmDialog" aria-labelledby="confirmTitle">
+  <div class="dialog-head">
+    <h2 id="confirmTitle">确认</h2>
+  </div>
+  <div class="dialog-body">
+    <p class="confirm-body" id="confirmBody"></p>
+  </div>
+  <div class="dialog-foot">
+    <button type="button" class="btn ghost small" id="confirmCancel">取消</button>
+    <button type="button" class="btn danger small" id="confirmOk">确定</button>
+  </div>
+</dialog>
+
+<p class="sr-only" id="live" role="status" aria-live="polite"></p>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="/lucide.min.js"></script>
+<script src="/app.js"></script>
+</body>
+</html>

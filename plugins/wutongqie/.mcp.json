@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "wutongqie": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${ZCODE_PLUGIN_ROOT}/mcp/server.mjs"],
+      "env": {
+        "ZCODE_PLUGIN_DATA": "${ZCODE_PLUGIN_DATA}",
+        "WTQ_OUTPUT_ROOT": "${user_config.output_root}",
+        "WTQ_LLM_PROVIDER_ID": "${user_config.llm_provider_id}",
+        "WTQ_LLM_MODEL_ID": "${user_config.llm_model_id}"
+      }
+    }
+  }
+}

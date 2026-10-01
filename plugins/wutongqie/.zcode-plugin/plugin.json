@@ -1,0 +1,45 @@
+{
+  "name": "wutongqie",
+  "version": "1.3.1",
+  "description": "无痛切：ZCode 压缩对话自动归档与换会话交接。平时照常工作，被上下文压缩吞掉的对话会自动归档到工作区；准备换新会话时立即返回可直接粘贴的交接草稿（内容没变化则直接复用最新交接），后台继续完善同一份交接文档，完成后在下一轮对话播报最终版。",
+  "author": {
+    "name": "无痛切"
+  },
+  "license": "MIT",
+  "skills": "skills",
+  "commands": "commands",
+  "hooks": "./hooks/hooks.json",
+  "mcpServers": {
+    "wutongqie": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["${ZCODE_PLUGIN_ROOT}/mcp/server.mjs"],
+      "env": {
+        "ZCODE_PLUGIN_DATA": "${ZCODE_PLUGIN_DATA}",
+        "WTQ_OUTPUT_ROOT": "${user_config.output_root}",
+        "WTQ_LLM_PROVIDER_ID": "${user_config.llm_provider_id}",
+        "WTQ_LLM_MODEL_ID": "${user_config.llm_model_id}"
+      }
+    }
+  },
+  "userConfig": {
+    "output_root": {
+      "type": "string",
+      "title": "归档根目录",
+      "description": "归档与交接文档存到哪里。留空 = 每个工作区各自存到 <工作区>/.无痛切/；填一个绝对路径则所有会话统一存到那里。",
+      "default": ""
+    },
+    "llm_provider_id": {
+      "type": "string",
+      "title": "模型供应商 id",
+      "description": "留空 = 自动挑 ZCode 里第一个可用的 openai 兼容供应商（只支持 openai-chat-completions）。密钥直接复用 ZCode 的配置，不用另外填；摘要会把对话内容发给该供应商并产生真实 token 消耗。",
+      "default": ""
+    },
+    "llm_model_id": {
+      "type": "string",
+      "title": "模型 id",
+      "description": "留空 = 用该供应商的第一个模型。",
+      "default": ""
+    }
+  }
+}

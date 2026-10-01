@@ -1,0 +1,15 @@
+{
+  "name": "wtq-frontend-smoke",
+  "version": "1.0.0",
+  "private": true,
+  "description": "无痛切面板前端 jsdom 冒烟测试（本地开发用，不属于插件包）",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node smoke.js",
+    "test:guard": "node smoke.js --guard-selftest"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "jsdom": "^29.1.1"
+  }
+}

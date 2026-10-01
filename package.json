@@ -1,0 +1,16 @@
+{
+  "name": "wutongqie",
+  "version": "1.3.1",
+  "private": true,
+  "description": "无痛切：ZCode 上下文压缩对话的自动归档与换会话交接插件",
+  "type": "module",
+  "scripts": {
+    "install:plugin": "node install.mjs",
+    "uninstall:plugin": "node install.mjs --uninstall",
+    "check": "node install.mjs --check",
+    "selftest": "node plugins/wutongqie/scripts/selftest.mjs",
+    "llmtest": "node plugins/wutongqie/scripts/llmtest.mjs",
+    "test": "node plugins/wutongqie/scripts/tests.handoff.mjs",
+    "test:frontend": "node .zcode/tests/frontend-smoke/smoke.js"
+  }
+}

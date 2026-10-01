@@ -1,0 +1,18 @@
+{
+  "name": "wutongqie-market",
+  "plugins": [
+    {
+      "name": "wutongqie",
+      "source": "./wutongqie",
+      "version": "1.3.1",
+      "description": "无痛切：ZCode 压缩对话自动归档与换会话交接。平时照常工作，被上下文压缩吞掉的对话会自动归档到工作区；准备换新会话时立即返回可直接粘贴的交接草稿（内容没变化则直接复用最新交接），后台继续完善同一份交接文档，完成后在下一轮对话播报最终版。",
+      "displayName": "无痛切",
+      "displayName_i18n": {
+        "zh-CN": "无痛切"
+      },
+      "description_i18n": {
+        "zh-CN": "ZCode 压缩对话自动归档与换会话交接：准备换会话时立即返回可复制的交接草稿，或直接复用最新交接；后台完善后在下一轮对话播报最终版。"
+      }
+    }
+  ]
+}

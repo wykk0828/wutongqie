@@ -1,0 +1,30 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "process",
+            "command": "node",
+            "args": ["${ZCODE_PLUGIN_ROOT}/hooks/compact-watch.mjs"],
+            "timeoutMs": 12000,
+            "statusMessage": "无痛切：检查压缩归档"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "process",
+            "command": "node",
+            "args": ["${ZCODE_PLUGIN_ROOT}/hooks/compact-watch.mjs"],
+            "timeoutMs": 12000,
+            "statusMessage": "无痛切：检查压缩归档"
+          }
+        ]
+      }
+    ]
+  }
+}
